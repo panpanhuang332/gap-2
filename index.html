@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gap D 數位資訊污染缺口｜互動式學習網站</title>
+<style>
+:root{
+  --bg:#fafaf7;
+  --paper:#ffffff;
+  --ink:#1a1a1a;
+  --ink-soft:#4a4a4a;
+  --muted:#8a8a8a;
+  --line:#e5e2dc;
+  --accent:#1f4e8c;
+  --accent-soft:#e8f0fa;
+  --highlight:#f4d03f;
+  --green:#2d7a4f;
+  --red:#c0392b;
+  --yellow:#d68910;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Noto Sans TC","Helvetica Neue","Segoe UI",-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.75;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+.layout{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  min-height:100vh;
+}
+
+/* === Sidebar === */
+.sidebar{
+  background:var(--paper);
+  border-right:1px solid var(--line);
+  padding:28px 22px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+}
+.sidebar h1{
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:-.5px;
+  margin-bottom:6px;
+  color:var(--ink);
+}
+.sidebar .sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:24px;
+  line-height:1.5;
+}
+.nav-list{list-style:none;display:flex;flex-direction:column;gap:2px}
+.nav-list li a{
+  display:block;
+  padding:10px 12px;
+  font-size:14px;
+  color:var(--ink-soft);
+  text-decoration:none;
+  border-radius:6px;
+  border-left:3px solid transparent;
+  transition:all .15s;
+}
+.nav-list li a:hover{background:var(--accent-soft);color:var(--accent)}
+.nav-list li a.active{
+  background:var(--accent-soft);
+  color:var(--accent);
+  border-left-color:var(--accent);
+  font-weight:600;
+}
+.nav-list li a .num{
+  display:inline-block;
+  width:22px;
+  font-size:11px;
+  color:var(--muted);
+  font-family:"SF Mono",monospace;
+}
+
+.sidebar .meta{
+  margin-top:30px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+/* === Main === */
+main{
+  padding:48px 56px 80px;
+  max-width:920px;
+}
+.intro-block{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:28px 32px;
+  margin-bottom:32px;
+  box-shadow:var(--shadow);
+}
+.intro-block h2{font-size:24px;margin-bottom:12px;letter-spacing:-.5px}
+.intro-block p{color:var(--ink-soft);font-size:15px}
+.tag-row{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:14px;
+  font-weight:500;
+}
+
+/* === Chapter === */
+.chapter{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:36px 40px;
+  margin-bottom:36px;
+  box-shadow:var(--shadow);
+  scroll-margin-top:20px;
+}
+.chapter-head{
+  border-bottom:2px solid var(--ink);
+  padding-bottom:14px;
+  margin-bottom:24px;
+}
+.chapter-no{
+  font-family:"SF Mono",monospace;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.chapter-title{
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:-.5px;
+  margin-top:4px;
+}
+.chapter-en{
+  font-size:14px;
+  color:var(--muted);
+  font-style:italic;
+  margin-top:4px;
+}
+
+/* tabs */
+.tabs{
+  display:flex;
+  gap:4px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:24px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{
+  background:transparent;
+  border:none;
+  padding:10px 16px;
+  font-size:14px;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  white-space:nowrap;
+  font-family:inherit;
+  transition:all .15s;
+}
+.tab-btn:hover{color:var(--ink-soft)}
+.tab-btn.active{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+  font-weight:600;
+}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* concept */
+.concept-section h3{font-size:17px;margin:20px 0 10px;color:var(--accent);font-weight:600}
+.concept-section h3:first-child{margin-top:0}
+.concept-section p{margin-bottom:14px;color:var(--ink-soft)}
+.concept-section ul{padding-left:22px;margin-bottom:14px}
+.concept-section li{margin-bottom:6px;color:var(--ink-soft)}
+.callout{
+  background:var(--accent-soft);
+  border-left:3px solid var(--accent);
+  padding:14px 18px;
+  border-radius:0 6px 6px 0;
+  margin:16px 0;
+  font-size:14px;
+  color:var(--ink-soft);
+}
+.callout strong{color:var(--accent)}
+.formula{
+  background:#fafaf5;
+  border:1px solid var(--line);
+  padding:14px 18px;
+  border-radius:6px;
+  font-family:"SF Mono","Cambria Math",serif;
+  text-align:center;
+  font-size:15px;
+  margin:14px 0;
+  color:var(--ink);
+}
+
+/* sentence pairs */
+.sentence-pair{
+  border-left:3px solid var(--line);
+  padding:12px 14px 12px 16px;
+  margin-bottom:14px;
+  border-radius:0 6px 6px 0;
+  transition:border-color .2s,background .2s;
+}
+.sentence-pair:hover{border-left-color:var(--accent);background:#fdfcf8}
+.sent-en{
+  font-family:"Charter","Georgia",serif;
+  font-size:15.5px;
+  line-height:1.7;
+  color:var(--ink);
+  margin-bottom:6px;
+}
+.sent-zh{
+  font-size:14.5px;
+  color:var(--ink-soft);
+  line-height:1.7;
+  margin-bottom:8px;
+}
+.sent-controls{display:flex;gap:6px;flex-wrap:wrap}
+.tts-btn{
+  background:var(--paper);
+  border:1px solid var(--line);
+  font-size:11px;
+  padding:3px 10px;
+  border-radius:12px;
+  cursor:pointer;
+  color:var(--ink-soft);
+  font-family:inherit;
+  transition:all .15s;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.tts-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tts-btn.zh:hover{background:#7d4f1c;border-color:#7d4f1c}
+.tts-btn.speaking{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* vocab hover */
+.vocab{
+  border-bottom:1.5px dotted var(--accent);
+  cursor:help;
+  position:relative;
+  color:var(--ink);
+  font-weight:500;
+  background:rgba(31,78,140,.04);
+  padding:0 2px;
+  border-radius:2px;
+}
+.vocab:hover{background:rgba(31,78,140,.12)}
+.vocab .tip{
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--ink);
+  color:#fff;
+  padding:8px 12px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:400;
+  white-space:nowrap;
+  max-width:280px;
+  white-space:normal;
+  width:max-content;
+  max-width:240px;
+  text-align:center;
+  z-index:50;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s;
+  line-height:1.5;
+  font-family:"Noto Sans TC",sans-serif;
+}
+.vocab .tip::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:var(--ink);
+}
+.vocab:hover .tip,.vocab.show .tip{opacity:1}
+
+/* quiz */
+.quiz-card{
+  background:#fdfcf8;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:20px 22px;
+  margin-bottom:18px;
+}
+.quiz-q{
+  font-weight:600;
+  margin-bottom:12px;
+  font-size:15px;
+  color:var(--ink);
+}
+.quiz-q .qtag{
+  background:var(--accent);
+  color:#fff;
+  font-size:11px;
+  padding:2px 8px;
+  border-radius:10px;
+  margin-right:8px;
+  font-weight:500;
+  letter-spacing:.5px;
+}
+.quiz-options{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{
+  background:var(--paper);
+  border:1.5px solid var(--line);
+  padding:11px 14px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  color:var(--ink-soft);
+  text-align:left;
+  font-family:inherit;
+  transition:all .15s;
+  line-height:1.55;
+}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.quiz-opt:disabled{cursor:default}
+.quiz-opt.correct{
+  background:#e8f5ec;
+  border-color:var(--green);
+  color:var(--green);
+  font-weight:500;
+}
+.quiz-opt.wrong{
+  background:#fdecea;
+  border-color:var(--red);
+  color:var(--red);
+}
+.quiz-opt .marker{display:inline-block;font-weight:700;margin-right:6px;width:20px}
+.quiz-feedback{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:6px;
+  font-size:13.5px;
+  line-height:1.7;
+  display:none;
+}
+.quiz-feedback.show{display:block;animation:fadeIn .2s}
+.quiz-feedback.correct{background:#e8f5ec;color:#1d5235;border-left:3px solid var(--green)}
+.quiz-feedback.wrong{background:#fdecea;color:#7a201a;border-left:3px solid var(--red)}
+
+/* unsupported tts hint */
+.tts-warning{
+  display:none;
+  background:#fff3cd;
+  border-left:3px solid var(--yellow);
+  padding:10px 14px;
+  font-size:13px;
+  color:#7a5b13;
+  margin-bottom:16px;
+  border-radius:0 4px 4px 0;
+}
+
+/* table for hypotheses */
+table.hyp-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+  margin:12px 0;
+}
+.hyp-table th,.hyp-table td{
+  border:1px solid var(--line);
+  padding:10px 12px;
+  text-align:left;
+  vertical-align:top;
+}
+.hyp-table th{background:#f4f1ec;font-weight:600;color:var(--ink)}
+.hyp-table td:first-child{font-weight:600;color:var(--accent);white-space:nowrap}
+
+/* color tier badges */
+.tier{display:inline-block;padding:2px 9px;border-radius:11px;font-size:12px;font-weight:600}
+.tier.green{background:#e8f5ec;color:var(--green)}
+.tier.yellow{background:#fef5e1;color:#a06b0c}
+.tier.red{background:#fdecea;color:var(--red)}
+
+/* progress */
+.progress-bar{
+  position:fixed;
+  top:0;left:0;
+  height:3px;
+  background:var(--accent);
+  width:0;
+  z-index:100;
+  transition:width .2s;
+}
+
+/* mobile */
+.mobile-toggle{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{
+    position:fixed;
+    z-index:80;
+    width:280px;
+    transform:translateX(-100%);
+    transition:transform .25s;
+    box-shadow:0 0 30px rgba(0,0,0,.1);
+  }
+  .sidebar.open{transform:translateX(0)}
+  main{padding:72px 22px 60px;max-width:100%}
+  .chapter{padding:24px 20px}
+  .intro-block{padding:22px 20px}
+  .chapter-title{font-size:22px}
+  .mobile-toggle{
+    display:flex;
+    position:fixed;
+    top:14px;left:14px;
+    z-index:90;
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:inherit;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    box-shadow:var(--shadow);
+  }
+  .vocab .tip{max-width:200px;font-size:12px}
+}
+
+footer{
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+  padding:30px 20px;
+  border-top:1px solid var(--line);
+  margin-top:40px;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<button class="mobile-toggle" id="mobileToggle">☰ 章節目錄</button>
+
+<div class="layout">
+
+  <!-- =============== SIDEBAR =============== -->
+  <aside class="sidebar" id="sidebar">
+    <h1>Gap D 學習網站</h1>
+    <p class="sub">數位資訊污染缺口理論<br>互動式雙語學習平台</p>
+    <nav>
+      <ul class="nav-list">
+        <li><a href="#ch1" class="active"><span class="num">01</span>導論：ZMOT 崩解現象</a></li>
+        <li><a href="#ch2"><span class="num">02</span>PZB 缺口模型與 Gap D</a></li>
+        <li><a href="#ch3"><span class="num">03</span>三維獨立性論證</a></li>
+        <li><a href="#ch4"><span class="num">04</span>EAQUAL-15 量表</a></li>
+        <li><a href="#ch5"><span class="num">05</span>MACS 平台系統</a></li>
+        <li><a href="#ch6"><span class="num">06</span>EHM 雙軌與假設</a></li>
+        <li><a href="#ch7"><span class="num">07</span>研究方法與預期</a></li>
+      </ul>
+    </nav>
+    <div class="meta">
+      原文：黄國津 (2026)<br>
+      Closing the Pre-Encounter Pollution Gap<br>
+      Pre-Registered Report v1.0
+    </div>
+  </aside>
+
+  <!-- =============== MAIN =============== -->
+  <main>
+    <div class="intro-block">
+      <h2>數位假評論時代的服務品質理論</h2>
+      <p>本網站將一篇 SSCI 等級的整合型論文拆解成 7 個學習單元，涵蓋 Gap D 理論建構、EAQUAL-15 量表、MACS 平台系統、以及背後的 PZB、Drucker、Spence、Akerlof 理論支柱。每章皆有逐句中英對照、單字解釋（滑鼠移上顯示）、TTS 朗讀與互動測驗。</p>
+      <div class="tag-row">
+        <span class="tag">Gap D</span>
+        <span class="tag">PZB Model</span>
+        <span class="tag">Fake Reviews</span>
+        <span class="tag">EAQUAL-15</span>
+        <span class="tag">MACS</span>
+        <span class="tag">EHM</span>
+        <span class="tag">Information Asymmetry</span>
+        <span class="tag">Signaling Theory</span>
+        <span class="tag">Market Failure</span>
+      </div>
+    </div>
+
+    <div class="tts-warning" id="ttsWarn">⚠ 您的瀏覽器不支援 Web Speech API，朗讀功能無法使用。建議使用最新版 Chrome、Edge 或 Safari。</div>
+
+    <!-- ============ CHAPTER 1 ============ -->
+    <section class="chapter" id="ch1">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 01</div>
+        <h2 class="chapter-title">導論：ZMOT 崩解與理論空缺</h2>
+        <div class="chapter-en">Introduction: The ZMOT Collapse and Theoretical Lacuna</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c1-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c1-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c1-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c1-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c1-overview">
+        <div class="concept-section">
+          <h3>本章學習目標</h3>
+          <ul>
+            <li>理解 <span class="vocab">ZMOT<span class="tip">Zero Moment of Truth，零關鍵時刻：消費者在實際接觸服務前，先在線上蒐集資訊的階段</span></span> 概念與其崩解機制</li>
+            <li>認識 <span class="vocab">fake online reviews<span class="tip">假網路評論：第三方偽造的線上評論，扭曲消費者期望</span></span> 如何系統性污染消費者的購前期望</li>
+            <li>掌握三大研究問題（RQ1 理論獨立性、RQ2 測量、RQ3 介入）</li>
+          </ul>
+          <h3>核心論點</h3>
+          <p>當代消費者在做出購買決策前，幾乎必然會先經過線上的<span class="vocab">information-gathering<span class="tip">資訊蒐集</span></span>階段——這就是 Lecinski (2011) 提出的 ZMOT。原本這個機制的設計目的，是要 <strong>降低</strong> 服務業天生具有的<span class="vocab">information asymmetry<span class="tip">資訊不對稱：賣方比買方更瞭解服務品質的狀況</span></span>，並提升<span class="vocab">consumer pre-purchase decisions<span class="tip">消費者購前決策：在實際購買行為發生前的選擇判斷過程</span></span>的品質。</p>
+          <p>然而假評氾濫造成所謂的「<strong>ZMOT 崩解</strong>」：消費者以為自己在閱讀真實的同儕經驗分享，實際上卻是在被精心製造、用來偏移期望的虛假敘事所操弄。</p>
+          <div class="callout">
+            <strong>關鍵洞見：</strong>即使假評在事後被偵測並刪除，已經接觸過這些假評的消費者，其期望已經被扭曲。這些被扭曲的期望會延伸傳播到實際的服務接觸中，產生一個<strong>無法靠事後刪除來逆轉</strong>的服務品質缺口。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c1-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">In contemporary digital service ecosystems, online reviews function as the primary informational input for consumer pre-purchase decisions.</div>
+          <div class="sent-zh">在當代的數位服務生態系中，線上評論扮演了消費者購前決策的主要資訊輸入。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="In contemporary digital service ecosystems, online reviews function as the primary informational input for consumer pre-purchase decisions.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="在當代的數位服務生態系中，線上評論扮演了消費者購前決策的主要資訊輸入。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Empirical evidence is striking: 93% of consumers consult online reviews before purchase, and 71% rely on Google Reviews specifically.</div>
+          <div class="sent-zh">實證證據非常顯著：93% 的消費者在購買前會查閱線上評論，其中 71% 特別仰賴 Google 評論。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Empirical evidence is striking. 93 percent of consumers consult online reviews before purchase, and 71 percent rely on Google Reviews specifically.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="實證證據非常顯著：93% 的消費者在購買前會查閱線上評論，其中 71% 特別仰賴 Google 評論。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">This mechanism was originally designed to reduce the structural information asymmetry inherent in service industries.</div>
+          <div class="sent-zh">此機制原本的設計目的，是要降低服務產業先天具有的結構性資訊不對稱。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="This mechanism was originally designed to reduce the structural information asymmetry inherent in service industries.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="此機制原本的設計目的，是要降低服務產業先天具有的結構性資訊不對稱。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">However, the proliferation of fake online reviews has precipitated what we term the ZMOT collapse.</div>
+          <div class="sent-zh">然而，假評論的氾濫導致了我們所稱的「ZMOT 崩解」。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="However, the proliferation of fake online reviews has precipitated what we term the ZMOT collapse.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="然而，假評論的氾濫導致了我們所稱的「ZMOT 崩解」。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Even when fake reviews are detected and removed post-hoc, consumers who have already encountered them have already formed distorted expectations.</div>
+          <div class="sent-zh">即使假評被事後偵測並移除，已經接觸過這些評論的消費者，其期望早已被扭曲。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Even when fake reviews are detected and removed post-hoc, consumers who have already encountered them have already formed distorted expectations.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="即使假評被事後偵測並移除，已經接觸過這些評論的消費者，其期望早已被扭曲。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">These distorted expectations propagate forward into the actual service encounter, producing a service quality gap that cannot be reversed by retroactive deletion.</div>
+          <div class="sent-zh">這些被扭曲的期望會延續傳遞到實際的服務接觸中，產生一個無法靠事後刪除來逆轉的服務品質缺口。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="These distorted expectations propagate forward into the actual service encounter, producing a service quality gap that cannot be reversed by retroactive deletion.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="這些被扭曲的期望會延續傳遞到實際的服務接觸中，產生一個無法靠事後刪除來逆轉的服務品質缺口。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">This is not a technical problem with a technical solution; it is a theoretical gap in service quality measurement.</div>
+          <div class="sent-zh">這不是一個用技術手段就能解決的技術問題，而是服務品質測量上的一個理論缺口。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="This is not a technical problem with a technical solution. It is a theoretical gap in service quality measurement.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="這不是一個用技術手段就能解決的技術問題，而是服務品質測量上的一個理論缺口。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c1-concept">
+        <div class="concept-section">
+          <h3>1. ZMOT 概念回顧</h3>
+          <p><strong>ZMOT（Zero Moment of Truth，零關鍵時刻）</strong>由 Google 的 Lecinski (2011) 提出，指消費者在<span class="vocab">pre-encounter<span class="tip">接觸前的：在實際接觸服務之前的階段</span></span>必然經過的線上資訊蒐集階段。它位於傳統「First Moment of Truth（看到產品）」之前，是數位時代消費決策的真正起點，也構成本研究所稱的<span class="vocab">expectation formation<span class="tip">期望形成：消費者在接觸服務前建立心理預期的過程</span></span>關鍵階段。</p>
+
+          <h3>2. ZMOT 崩解的三層問題</h3>
+          <ul>
+            <li><strong>事後性（Post-hoc orientation）：</strong>傳統假評偵測都在「消費者已經看過」之後才作用，<span class="vocab">expectation pollution<span class="tip">期望污染：假評使消費者在接觸服務前就形成扭曲的心理預期</span></span>早已發生。</li>
+            <li><strong>對抗性脆弱（<span class="vocab">Adversarial brittleness<span class="tip">對抗性脆弱：當生成模型針對偵測模型訓練時，偵測效能急速下降</span></span>）：</strong>LLM 越強，假評越難從語言上被識別。</li>
+            <li><strong>消費者端空白（Consumer-side null）：</strong>沒有任何工具可以在<strong>消費者感知層面</strong>測量「期望真實性」。</li>
+          </ul>
+
+          <h3>3. 三大研究問題（Research Questions）</h3>
+          <div class="callout">
+            <strong>RQ1（理論獨立性）：</strong>Gap D 是不是 PZB Gap 4 的數位延伸，還是真正獨立的服務品質缺口？<br><br>
+            <strong>RQ2（測量）：</strong>如何從消費者視角測量「期望形成資訊的真實性」？<br><br>
+            <strong>RQ3（介入）：</strong>什麼樣的雙端機制（消費者意識 + 平台揭露）能回應 Akerlof (1970) 對<span class="vocab">market failure correction<span class="tip">市場失靈修正：透過制度設計矯正資訊不對稱所導致的市場無效率</span></span>的呼籲？
+          </div>
+
+          <h3>4. 現有 FRD 文獻的盲點</h3>
+          <p>過去十年的<span class="vocab">Fake Review Detection<span class="tip">假評論偵測（FRD）：以機器學習、深度學習辨識假評的研究路線</span></span>研究幾乎全部集中在技術層：機器學習分類器、深度學習網路、圖神經網路。雖然<span class="vocab">in-sample accuracy<span class="tip">樣本內準確率：模型在訓練資料上的準確度</span></span>常常超過 90%，但完全忽略了「期望污染早於偵測」這個本質性問題。這個忽略本質上是<span class="vocab">consumer-perception level<span class="tip">消費者感知層次：問題的關鍵不在後端演算法而在前端心理過程</span></span>的盲點。</p>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c1-quiz">
+        <div class="quiz-card" data-q="1-1" data-correct="1">
+          <div class="quiz-q"><span class="qtag">Q1</span>論文所稱的「ZMOT 崩解」最核心指的是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>Google 評論伺服器當機，消費者無法存取資訊</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>消費者以為在閱讀真實同儕經驗，實際上接觸的是被製造來偏移期望的假敘事</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>消費者完全不再使用線上評論</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>實體店面取代了線上資訊蒐集</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="1-2" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q2</span>論文認為，為什麼「事後偵測並刪除假評」無法解決根本問題？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>因為偵測技術不夠成熟</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>因為平台不願意刪除假評</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>因為已經接觸過假評的消費者，期望早已被污染並會延伸到實際服務接觸</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>因為法律不允許刪除使用者內容</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 2 ============ -->
+    <section class="chapter" id="ch2">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 02</div>
+        <h2 class="chapter-title">PZB 缺口模型與 Gap D 的形式化定義</h2>
+        <div class="chapter-en">PZB Gap Model and Formalization of Gap D</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c2-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c2-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c2-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c2-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c2-overview">
+        <div class="concept-section">
+          <h3>本章學習目標</h3>
+          <ul>
+            <li>回顧 <span class="vocab">PZB Model<span class="tip">Parasuraman, Zeithaml, Berry 在 1985 年提出的服務品質五缺口模型，引用次數超過 30,000 次</span></span> 的核心公式 SQ = P − E</li>
+            <li>理解傳統 Gap 4 在數位時代的盲點</li>
+            <li>掌握 Gap D 的數學定義與「方向極性」</li>
+            <li>學會修正後的 Gap 5 公式</li>
+          </ul>
+          <h3>PZB 模型的五個缺口</h3>
+          <p>Parasuraman、Zeithaml、Berry (1985) 將服務品質定義為消費者「<strong>感知</strong>（Perception, P）」與「<strong>期望</strong>（Expectation, E）」之間的差距：</p>
+          <div class="formula">SQ = P − E</div>
+          <p>其中期望的形成來源在 1985 年被界定為四種：<span class="vocab">word-of-mouth<span class="tip">口碑：來自親友、同儕的建議</span></span>、個人需求、過去經驗、以及<span class="vocab">external communications<span class="tip">外部溝通：原本指業者主動發出的廣告、文宣等</span></span>。<strong>而 Gap 4 處理的就是業者「外部承諾」與「實際提供」之間的落差。</strong></p>
+          <div class="callout">
+            <strong>關鍵：</strong>Gap 4 在 1985 年被設計時，「外部溝通」=「業者自己發的廣告」。但今天最影響期望的「外部資訊」，是<strong>第三方偽造、冒充同儕</strong>的假評論——這是 PZB 原始架構從未考慮過的新類別。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c2-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">PZB framed service quality not as a producer-defined attribute but as a customer-perceived gap.</div>
+          <div class="sent-zh">PZB 將服務品質定位為「不是由生產者定義的屬性」，而是「由顧客感知到的落差」。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="PZB framed service quality not as a producer-defined attribute but as a customer-perceived gap.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="PZB 將服務品質定位為「不是由生產者定義的屬性」，而是「由顧客感知到的落差」。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Reviews become a primary perception medium before any direct service contact occurs.</div>
+          <div class="sent-zh">評論成為實際服務接觸發生「之前」的主要感知媒介。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Reviews become a primary perception medium before any direct service contact occurs.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="評論成為實際服務接觸發生「之前」的主要感知媒介。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">PZB's Gap 4 was conceptualized when the dominant external communications were provider-originated.</div>
+          <div class="sent-zh">PZB 的 Gap 4 是在「主流的外部溝通=業者自身發出」的時代被概念化的。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="PZB's Gap 4 was conceptualized when the dominant external communications were provider originated.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="PZB 的 Gap 4 是在「主流的外部溝通等於業者自身發出」的時代被概念化的。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Fake reviews are not provider-originated external communications; they originate from third parties impersonating peer consumers.</div>
+          <div class="sent-zh">假評論並非業者發出的外部溝通；它們是由「冒充同儕消費者的第三方」所製造。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Fake reviews are not provider originated external communications. They originate from third parties impersonating peer consumers.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="假評論並非業者發出的外部溝通；它們是由「冒充同儕消費者的第三方」所製造。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">We formally define Gap D as the discrepancy between consumers' polluted expectations and authentic expectations.</div>
+          <div class="sent-zh">我們將 Gap D 形式化定義為：消費者「被污染的期望」與「真實的期望」之間的差距。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="We formally define Gap D as the discrepancy between consumers' polluted expectations and authentic expectations.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="我們將 Gap D 形式化定義為：消費者「被污染的期望」與「真實的期望」之間的差距。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Gap D possesses directional polarity: positive fake reviews inflate expectations, while negative fake reviews deflate them.</div>
+          <div class="sent-zh">Gap D 具有方向極性：正面假評使期望膨脹，負面假評使期望被壓低。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Gap D possesses directional polarity. Positive fake reviews inflate expectations, while negative fake reviews deflate them.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="Gap D 具有方向極性：正面假評使期望膨脹，負面假評使期望被壓低。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Studies measuring perceived service quality without controlling for review exposure systematically conflate authentic expectation gaps with pollution-induced gaps.</div>
+          <div class="sent-zh">沒有控制「評論曝露」就測量感知服務品質的研究，會系統性地把「真實期望缺口」與「污染導致的缺口」混為一談。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Studies measuring perceived service quality without controlling for review exposure systematically conflate authentic expectation gaps with pollution induced gaps.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="沒有控制評論曝露就測量感知服務品質的研究，會系統性地把真實期望缺口與污染導致的缺口混為一談。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c2-concept">
+        <div class="concept-section">
+          <h3>1. Gap D 的數學公式</h3>
+          <div class="formula">Gap D = E<sub>polluted</sub> − E<sub>authentic</sub></div>
+          <p>其中：</p>
+          <ul>
+            <li><strong>E<sub>polluted</sub></strong>：消費者在被假評污染後形成的期望</li>
+            <li><strong>E<sub>authentic</sub></strong>：在純真實資訊下會形成的期望</li>
+          </ul>
+
+          <h3>2. Gap D 的方向極性</h3>
+          <ul>
+            <li><strong>Gap D &gt; 0（期望被膨脹）：</strong>正面假評、付費刷評。即使實際服務 P 是「正常水準」，因為 E_polluted 被推高，<span class="vocab">P − E<sub>polluted</sub><span class="tip">感知服務品質：消費者實際感受 P 減去他被污染後的期望</span></span> 會擴大成負值，造成「明明沒服務失敗，但消費者卻很失望」。</li>
+            <li><strong>Gap D &lt; 0（期望被壓低）：</strong>負面假評、競爭者攻擊。消費者可能因此<strong>避免</strong>本來會喜歡的店家，或者反過來因為期望太低而對正常服務感到驚喜（但這是「<span class="vocab">manipulation-conditioned<span class="tip">操弄條件下的：在資訊被刻意扭曲的前提下</span></span>的驚喜」）。</li>
+          </ul>
+
+          <h3>3. 修正後的 Gap 5 公式</h3>
+          <div class="formula">Gap 5<sub>modified</sub> = E<sub>authentic</sub> + Gap D − P</div>
+          <p>這個公式明確指出：在數位時代，傳統測量出來的 Gap 5，<strong>內含了一個沒被觀察到的<span class="vocab">confounder<span class="tip">混淆因子：未被測量但會同時影響自變項與依變項的隱藏變項</span></span></strong>——也就是 Gap D。所以過去的服務品質研究，可能都低估或扭曲了真實的服務品質落差。</p>
+
+          <div class="callout">
+            <strong>本章重要對比：</strong><br>
+            • <strong>Gap 4（傳統）</strong>：業者自己廣告 vs. 業者實際提供<br>
+            • <strong>Gap D（新增）</strong>：第三方假評產生的污染期望 vs. 真實期望<br>
+            兩者的「資訊源」、「責任主體」、「消費者處理機制」都不同。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c2-quiz">
+        <div class="quiz-card" data-q="2-1" data-correct="1">
+          <div class="quiz-q"><span class="qtag">Q1</span>Gap D 的形式化定義是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>Gap D = P − E（感知減期望）</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>Gap D = E_polluted − E_authentic（被污染期望減真實期望）</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>Gap D = 廣告承諾 − 實際提供</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>Gap D = 業者期望 − 消費者期望</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="2-2" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q2</span>當 Gap D &gt; 0（期望被假好評膨脹）時，最可能發生的後果是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>消費者會徹底拒絕該服務</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>實際服務變得更好</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>即使服務沒有任何失敗，消費者仍會感到失望，因為實際表現低於被推高的期望</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>業者的 Gap 1（管理認知缺口）會自動關閉</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 3 ============ -->
+    <section class="chapter" id="ch3">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 03</div>
+        <h2 class="chapter-title">三維獨立性論證：Drucker × Spence × Akerlof</h2>
+        <div class="chapter-en">Three-Dimensional Argument for Gap D's Independence from Gap 4</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c3-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c3-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c3-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c3-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c3-overview">
+        <div class="concept-section">
+          <h3>本章學習目標</h3>
+          <ul>
+            <li>反駁「Gap D 只是 Gap 4 的數位版本」這種挑戰性立場</li>
+            <li>從三大理論支柱論證 Gap D 的制度性獨立</li>
+            <li>理解「業者廣告」與「假評」在<span class="vocab">accountability<span class="tip">問責性：行為者是否可被追究責任</span></span>、<span class="vocab">signal credibility<span class="tip">信號可信度：信號被消費者採信的程度</span></span>、<span class="vocab">market failure<span class="tip">市場失靈：市場機制無法達成有效率資源配置的狀態</span></span>三層面的本質差異</li>
+          </ul>
+
+          <h3>三大理論支柱</h3>
+          <table class="hyp-table">
+            <tr>
+              <th>維度</th>
+              <th>理論來源</th>
+              <th>Gap 4（業者廣告）</th>
+              <th>Gap D（假評）</th>
+            </tr>
+            <tr>
+              <td>1. 問責性</td>
+              <td>Drucker (1993)</td>
+              <td>業者具名、可法律追究</td>
+              <td>第三方匿名、跨司法管轄</td>
+            </tr>
+            <tr>
+              <td>2. 信號可信度</td>
+              <td>Spence (1973)</td>
+              <td>消費者啟動「說服知識」自動打折</td>
+              <td>偽裝成同儕，繞過說服知識防衛</td>
+            </tr>
+            <tr>
+              <td>3. 市場失靈</td>
+              <td>Akerlof (1970)</td>
+              <td>促銷誇大的次優均衡（穩定）</td>
+              <td>檸檬信號市場崩塌（誠實業者被淘汰）</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c3-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">A potential challenger position holds that Gap D is merely a digital extension of PZB Gap 4. We reject this collapse.</div>
+          <div class="sent-zh">一個可能的挑戰立場主張 Gap D 不過是 PZB Gap 4 的數位延伸。我們拒絕這種化約。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="A potential challenger position holds that Gap D is merely a digital extension of PZB Gap 4. We reject this collapse.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="一個可能的挑戰立場主張 Gap D 不過是 PZB Gap 4 的數位延伸。我們拒絕這種化約。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">PZB Gap 4 information actors are providers themselves, legally accountable for unfair claims under consumer protection law.</div>
+          <div class="sent-zh">PZB Gap 4 的資訊行為者就是業者本身，須依消費者保護法承擔不實宣傳的法律責任。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="PZB Gap 4 information actors are providers themselves, legally accountable for unfair claims under consumer protection law.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="PZB Gap 4 的資訊行為者就是業者本身，須依消費者保護法承擔不實宣傳的法律責任。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Gap D information actors are anonymous third parties: paid review farms, competitor saboteurs, AI-generated content operations.</div>
+          <div class="sent-zh">Gap D 的資訊行為者則是匿名的第三方：付費寫手集團、競爭者破壞者、AI 生成內容操作者。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Gap D information actors are anonymous third parties: paid review farms, competitor saboteurs, AI generated content operations.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="Gap D 的資訊行為者則是匿名的第三方：付費寫手集團、競爭者破壞者、AI 生成內容操作者。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Consumers activate persuasion knowledge and automatically discount provider advertising, but persuasion knowledge does not activate when the signal frame is peer experience-sharing.</div>
+          <div class="sent-zh">消費者面對業者廣告時會啟動「說服知識」自動打折，但當信號框架是「同儕經驗分享」時，說服知識並不會啟動。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Consumers activate persuasion knowledge and automatically discount provider advertising, but persuasion knowledge does not activate when the signal frame is peer experience sharing.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="消費者面對業者廣告時會啟動「說服知識」自動打折，但當信號框架是「同儕經驗分享」時，說服知識並不會啟動。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Gap D markets introduce a lemon-signaling pooling equilibrium, in which honest providers cannot credibly distinguish themselves from fake-review-juiced competitors.</div>
+          <div class="sent-zh">Gap D 市場帶來一種檸檬信號的混合均衡：誠實業者無法將自己與「靠假評加持」的競爭者做可信區分。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Gap D markets introduce a lemon signaling pooling equilibrium, in which honest providers cannot credibly distinguish themselves from fake review juiced competitors.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="Gap D 市場帶來一種檸檬信號的混合均衡：誠實業者無法將自己與「靠假評加持」的競爭者做可信區分。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">The cost-rational response for honest providers is to also engage in fake review production, a textbook lemons market collapse.</div>
+          <div class="sent-zh">對誠實業者而言，符合成本理性的回應就是也加入假評製造——這是教科書級別的檸檬市場崩塌。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="The cost rational response for honest providers is to also engage in fake review production, a textbook lemons market collapse.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="對誠實業者而言，符合成本理性的回應就是也加入假評製造——這是教科書級別的檸檬市場崩塌。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c3-concept">
+        <div class="concept-section">
+          <h3>維度 1：問責性（Accountability）— 來自 Drucker (1993)</h3>
+          <p>Drucker 的<span class="vocab">institutional accountability<span class="tip">制度性問責：管理責任跟隨可識別的代理人而存在</span></span>框架主張：管理責任跟隨「可識別的代理人」。</p>
+          <ul>
+            <li><strong>業者廣告：</strong>具名、可被消費者保護法、廣告法、契約法追究。業者的「不老實成本」非常高。</li>
+            <li><strong>假評：</strong>匿名、跨國、訴訟困難。「不老實成本」幾乎是零。這種<span class="vocab">jurisdictional dispersion<span class="tip">司法管轄分散：行為者跨多國，使單一法律體系難以追究</span></span>讓問責結構崩潰。</li>
+          </ul>
+
+          <h3>維度 2：信號可信度（Signal Credibility）— 來自 Spence (1973)</h3>
+          <p>Spence 的<span class="vocab">signaling theory<span class="tip">信號理論：信號的可信度取決於來源可識別性與成本結構</span></span>說：信號可信度取決於 (a) 來源可識別性、(b) 成本結構。</p>
+          <ul>
+            <li><strong>業者信號：</strong>來源已識別 → 消費者啟動<span class="vocab">persuasion knowledge<span class="tip">說服知識：消費者面對行銷信息時自動啟動的識別與打折機制</span></span>，自動打折。</li>
+            <li><strong>假評信號：</strong>偽裝成同儕 → 消費者用「同儕經驗」框架處理 → 說服知識<strong>不會啟動</strong> → 信號被全額採信，效果反而比真廣告還大。</li>
+          </ul>
+
+          <h3>維度 3：市場失靈機制（Market Failure）— 來自 Akerlof (1970)</h3>
+          <p>Akerlof 的「<span class="vocab">market for lemons<span class="tip">檸檬市場：當買方無法區分品質好壞時，劣品會驅逐優品的市場失靈現象</span></span>」描述：當買方無法區分品質時，優品被劣品擠出。</p>
+          <ul>
+            <li><strong>傳統 Gap 4 市場：</strong>「促銷誇大」是次優但<strong>穩定的均衡</strong>（消費者預期廣告誇大、自動折扣）。</li>
+            <li><strong>Gap D 市場：</strong>引入「檸檬信號的<span class="vocab">pooling equilibrium<span class="tip">混合均衡：好品質與壞品質無法被區分，被迫在同一價格區間競爭</span></span>」——誠實業者也只好下海製造假評，否則無法存活。台灣電商假評比例從 2018 年 12% 上升到 2024 年 29%，正是這個崩塌動態的證據。</li>
+          </ul>
+
+          <div class="callout">
+            <strong>三維結論：</strong>Gap 4 與 Gap D 在「資訊行為者責任」、「消費者處理路徑」、「市場均衡型態」三個層面都不同。它們不是程度的不同，而是<strong>制度性、結構性的不同</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c3-quiz">
+        <div class="quiz-card" data-q="3-1" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q1</span>為什麼假評對消費者的影響可能比業者自己的廣告更強？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>因為假評通常文筆比廣告好</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>因為假評有更多圖片</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>因為假評偽裝成「同儕經驗分享」，繞過了消費者面對廣告時自動啟動的「說服知識」防衛機制</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>因為假評會自動置頂</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="3-2" data-correct="3">
+          <div class="quiz-q"><span class="qtag">Q2</span>依 Akerlof 的檸檬市場推論，Gap D 對誠實業者最危險的後果是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>誠實業者會主動退出市場做慈善</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>誠實業者的營收會自動上升</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>消費者會逐漸只信任誠實業者</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>誠實業者無法把自己跟「靠假評加持的對手」區分開來，最終為了存活也只好加入假評製造，造成市場崩塌</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 4 ============ -->
+    <section class="chapter" id="ch4">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 04</div>
+        <h2 class="chapter-title">EAQUAL-15 量表：消費者端三構面測量</h2>
+        <div class="chapter-en">EAQUAL-15: A Three-Dimensional Consumer-Side Authenticity Scale</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c4-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c4-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c4-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c4-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c4-overview">
+        <div class="concept-section">
+          <h3>EAQUAL 是什麼？</h3>
+          <p><strong>EAQUAL（Expectation Authenticity Quality）</strong>= 期望真實性品質量表，是本研究發展的<strong>第一個</strong>從消費者視角測量「期望形成資訊真實性」的工具，共 15 題、3 個構面。</p>
+          <p>注意：EAQUAL 不是測量服務品質（那是 SERVQUAL 的事），而是測量「我接觸到的這份資訊，到底有多真？」</p>
+
+          <h3>三大構面（來自 Carlzon 1987 MOT 理論延伸）</h3>
+          <table class="hyp-table">
+            <tr>
+              <th>構面</th>
+              <th>題數</th>
+              <th>核心問題</th>
+              <th>對應理論支柱</th>
+            </tr>
+            <tr>
+              <td>SC<br>來源可信度</td>
+              <td>4</td>
+              <td>「Who 寫的？」帳號是否真實、可追溯</td>
+              <td>Drucker 問責</td>
+            </tr>
+            <tr>
+              <td>CA<br>內容真實性</td>
+              <td>6</td>
+              <td>「What 寫的？」是否含 MOT 具體細節</td>
+              <td>Spence 信號成本</td>
+            </tr>
+            <tr>
+              <td>EC<br>經驗一致性</td>
+              <td>5</td>
+              <td>「How fits？」與其他評論、自身經驗是否一致</td>
+              <td>Akerlof 均衡偵測</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c4-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">EAQUAL is decomposed into three sub-dimensions: Source Credibility, Content Authenticity, and Experience Consistency.</div>
+          <div class="sent-zh">EAQUAL 可拆解為三個子構面：來源可信度、內容真實性、經驗一致性。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="EAQUAL is decomposed into three sub dimensions: Source Credibility, Content Authenticity, and Experience Consistency.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="EAQUAL 可拆解為三個子構面：來源可信度、內容真實性、經驗一致性。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Source Credibility captures whether the consumer perceives the review-author as a real, accountable, traceable person rather than a fabricated identity.</div>
+          <div class="sent-zh">來源可信度抓取的是：消費者是否認為作者是「真實、可問責、可追溯」的人，而非偽造的身份。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Source Credibility captures whether the consumer perceives the review author as a real, accountable, traceable person rather than a fabricated identity.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="來源可信度抓取的是：消費者是否認為作者是「真實、可問責、可追溯」的人，而非偽造的身份。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Content Authenticity captures the perceived presence of MOT-anchored specific details indicating actual experience.</div>
+          <div class="sent-zh">內容真實性抓取的是：消費者感知到的「MOT 具體細節」存在程度，這些細節指向實際經驗。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Content Authenticity captures the perceived presence of MOT anchored specific details indicating actual experience.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="內容真實性抓取的是：消費者感知到的「MOT 具體細節」存在程度，這些細節指向實際經驗。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Experience Consistency captures the perceived alignment between review descriptions and the consumer's own experience.</div>
+          <div class="sent-zh">經驗一致性抓取的是：評論描述與消費者自身（或預期中）的經驗之間的對齊程度。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Experience Consistency captures the perceived alignment between review descriptions and the consumer's own experience.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="經驗一致性抓取的是：評論描述與消費者自身（或預期中）的經驗之間的對齊程度。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Fake review producers, lacking actual experience, can only invoke generic affective labels.</div>
+          <div class="sent-zh">假評論製造者由於缺乏實際經驗，只能訴諸通用的情緒性標籤。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Fake review producers, lacking actual experience, can only invoke generic affective labels.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="假評論製造者由於缺乏實際經驗，只能訴諸通用的情緒性標籤。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Salminen et al. (2025) demonstrated that fake reviews exhibit significantly lower sensory word density and cognitive specificity than authentic reviews.</div>
+          <div class="sent-zh">Salminen 等人 (2025) 證實假評在「感官詞彙密度」與「認知具體性」上顯著低於真實評論。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Salminen and colleagues 2025 demonstrated that fake reviews exhibit significantly lower sensory word density and cognitive specificity than authentic reviews.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="Salminen 等人 2025 證實假評在感官詞彙密度與認知具體性上顯著低於真實評論。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c4-concept">
+        <div class="concept-section">
+          <h3>1. Source Credibility（SC，4 題）</h3>
+          <p>消費者感知中，作者「是不是真的人」。操作錨點：</p>
+          <ul>
+            <li><span class="vocab">account history<span class="tip">帳號歷史：使用者帳號的存在時間與使用紀錄</span></span>長度</li>
+            <li>發文頻率與型態</li>
+            <li>個人檔案揭露程度</li>
+            <li><span class="vocab">cross-platform consistency<span class="tip">跨平台一致性：同一人在不同平台的身份線索是否相互呼應</span></span></li>
+          </ul>
+
+          <h3>2. Content Authenticity（CA，6 題）</h3>
+          <p>來自 Carlzon (1987) <span class="vocab">Moment of Truth<span class="tip">關鍵時刻：服務接觸的具體瞬間，包含時間、空間、人員互動、感官細節、偶發事件等</span></span> 理論——真正去過的人會留下「<span class="vocab">MOT-anchored<span class="tip">MOT 錨定的：以服務接觸具體細節為依據的</span></span>」具體細節：</p>
+          <ul>
+            <li><span class="vocab">temporal markers<span class="tip">時間性標記：等了多久、何時來訪等具體時間描述</span></span>（等了多久）</li>
+            <li>空間描述（座位位置、動線）</li>
+            <li>人員互動（特定服務生的話）</li>
+            <li><span class="vocab">sensory particulars<span class="tip">感官細節：味道、聲音、溫度、觸感等多感官描述</span></span>（味道、聲音、溫度）</li>
+            <li><span class="vocab">contingent events<span class="tip">偶發事件：突然發生、難以預先編造的事件</span></span>（突然的事件）</li>
+            <li>社交線索與溝通互動</li>
+          </ul>
+          <div class="callout">
+            <strong>關鍵心理語言學發現：</strong>Salminen 等人分析 3,070 則評論發現，假評的<span class="vocab">sensory word density<span class="tip">感官詞彙密度：單位文字中感官描述詞的密集程度</span></span>與<span class="vocab">cognitive specificity<span class="tip">認知具體性：陳述的細節豐富度與可驗證性</span></span>顯著較低（d = 0.62, p &lt; .001）。這就是 CA 構面的實證基礎。
+          </div>
+
+          <h3>3. Experience Consistency（EC，5 題）</h3>
+          <p>跨評論共識、時間一致性、群體層級一致性、期望-缺口描述、反向經驗指標。</p>
+
+          <h3>4. EAQUAL 預期心理計量性質（H1 預先註冊）</h3>
+          <table class="hyp-table">
+            <tr><th>指標</th><th>預期區間</th><th>判定門檻</th></tr>
+            <tr><td>Cronbach's α (整體)</td><td>0.88–0.93</td><td>≥ 0.80</td></tr>
+            <tr><td>CFI</td><td>0.95–0.98</td><td>≥ 0.95</td></tr>
+            <tr><td>RMSEA</td><td>0.04–0.06</td><td>≤ 0.06</td></tr>
+            <tr><td>AVE</td><td>≥ 0.55</td><td>&gt; 0.50</td></tr>
+            <tr><td>EAQUAL → 信任 β</td><td>0.42–0.55</td><td>p &lt; .001</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c4-quiz">
+        <div class="quiz-card" data-q="4-1" data-correct="0">
+          <div class="quiz-q"><span class="qtag">Q1</span>EAQUAL-15 量表的三個構面分別對應哪三個理論支柱？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>SC ↔ Drucker 問責、CA ↔ Spence 信號成本、EC ↔ Akerlof 均衡偵測</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>SC ↔ Akerlof、CA ↔ Drucker、EC ↔ Spence</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>三個構面都對應同一個理論</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>EAQUAL 與這三個理論無關</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="4-2" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q2</span>依 Salminen 等人 (2025)，假評論的<strong>什麼語言特徵</strong>顯著低於真實評論？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>標點符號數量</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>表情符號數量</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>感官詞彙密度與認知具體性（cognitive specificity）</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>使用大寫字母的比例</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 5 ============ -->
+    <section class="chapter" id="ch5">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 05</div>
+        <h2 class="chapter-title">MACS 平台端認證系統</h2>
+        <div class="chapter-en">MACS: MOT Authenticity Certification System (Platform-Side)</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c5-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c5-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c5-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c5-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c5-overview">
+        <div class="concept-section">
+          <h3>MACS 是什麼？</h3>
+          <p><strong>MACS</strong> = MOT Authenticity Certification System，是 EAQUAL 的「平台端對應系統」。重點是：EAQUAL 自己只是「測量」，並不能讓 Gap D 縮小。要讓 Gap D 真的減小，必須有平台端的搭配，而 MACS 就是這個搭配。</p>
+
+          <h3>核心運作：點選式評分</h3>
+          <p>傳統評論：使用者寫一段話 → 平台被動接受。<br>MACS 做法：平台額外提供（或部分取代）<strong>結構化的 MOT 細節選項</strong>，使用者勾選實際符合自己經驗的細節，系統用<span class="vocab">weighted aggregation<span class="tip">加權彙總：把多個個別分數依權重綜合成一個整體分數</span></span>公式生成「MACS 真實性分數」。</p>
+
+          <h3>三色等級制</h3>
+          <ul>
+            <li><span class="tier green">Green ≥ 1.5</span>　高真實性：MOT 細節豐富、與已知真實評論者分布一致</li>
+            <li><span class="tier yellow">Yellow 0.8–1.5</span>　中等真實性：部分細節，需審慎參考</li>
+            <li><span class="tier red">Red &lt; 0.8</span>　低真實性：缺乏 MOT 細節，疑似假評</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c5-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">EAQUAL alone provides a measurement layer; it does not by itself reduce Gap D.</div>
+          <div class="sent-zh">單靠 EAQUAL 只能提供測量層，並不能單獨縮小 Gap D。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="EAQUAL alone provides a measurement layer. It does not by itself reduce Gap D.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="單靠 EAQUAL 只能提供測量層，並不能單獨縮小 Gap D。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">A complete intervention requires platform-side coupling.</div>
+          <div class="sent-zh">完整的介入機制必須有平台端的耦合搭配。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="A complete intervention requires platform side coupling.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="完整的介入機制必須有平台端的耦合搭配。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">MACS operates on a click-selection paradigm: rather than only accepting open-text reviews, platforms present consumers with categorized MOT-detail options.</div>
+          <div class="sent-zh">MACS 採取「點選式」典範：平台不只接受開放式文字評論，而是同時提供結構化的 MOT 細節選項供使用者勾選。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="MACS operates on a click selection paradigm. Rather than only accepting open text reviews, platforms present consumers with categorized MOT detail options.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="MACS 採取點選式典範：平台不只接受開放式文字評論，而是同時提供結構化的 MOT 細節選項供使用者勾選。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">The semantic database is constructed via a transparent, pre-registered three-LLM ensemble protocol.</div>
+          <div class="sent-zh">語意題庫採用透明、預先註冊的三 LLM 集成協議建構。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="The semantic database is constructed via a transparent, pre registered three LLM ensemble protocol.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="語意題庫採用透明、預先註冊的三 LLM 集成協議建構。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">MACS reshapes the cost of fabricated reviews by making MOT-specific detail required for high authenticity score.</div>
+          <div class="sent-zh">MACS 透過「高真實性分數必須具備 MOT 具體細節」的設計，重塑了製造假評的成本結構。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="MACS reshapes the cost of fabricated reviews by making MOT specific detail required for high authenticity score.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="MACS 透過「高真實性分數必須具備 MOT 具體細節」的設計，重塑了製造假評的成本結構。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Three-color thresholds are anchored to Local Guide Level 7 reviewers as proxy for known authentic subset.</div>
+          <div class="sent-zh">三色門檻以 Local Guide 第 7 級以上的評論者作為「已知真實樣本」之代理基準。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Three color thresholds are anchored to Local Guide Level 7 reviewers as proxy for known authentic subset.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="三色門檻以 Local Guide 第 7 級以上的評論者作為「已知真實樣本」之代理基準。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c5-concept">
+        <div class="concept-section">
+          <h3>1. 語意題庫五步驟建構（Phase 1）</h3>
+          <ul>
+            <li><strong>Step 1 種子擴展：</strong>Claude Sonnet 4.5、GPT-4o、Gemini 2.0 Flash 三家 LLM，各自針對 16 個 MOT 子類別生成 30 題候選，共 1,440 題原始題目。</li>
+            <li><strong>Step 2 三家投票：</strong>每題依 5 個維度（<span class="vocab">construct purity<span class="tip">構念純度：題目是否清楚對應到目標構念而不混淆其他構念</span></span>、具體性、<span class="vocab">measurability<span class="tip">可測量性：題目能否轉換成穩定可量化的測量資料</span></span>、流暢性、<span class="vocab">discriminability<span class="tip">區辨性：題目是否能有效區別真假評論</span></span>）打 1–5 分。<strong>平均 ≥ 4.0 且變異 ≤ 0.5 → Keep；&lt; 3.0 → Drop；其他 → Manual_Review</strong>。</li>
+            <li><strong>Step 3 去重：</strong>用 OpenAI text-embedding-3-small 算 <span class="vocab">cosine similarity<span class="tip">餘弦相似度：兩個向量在語意空間中的相似程度</span></span>，&gt; 0.92 直接合併保留高分者。</li>
+            <li><strong>Step 4 真實語料校驗：</strong>1,000 則 Google Maps 餐廳評論，<span class="vocab">stratified sampling<span class="tip">分層抽樣：依特徵分組後在每組內隨機抽樣，確保各層代表性</span></span>（餐廳類型 × 星等 × 長度）。三 LLM 各自做 MOT 細節抽取與題目對應。<strong><span class="vocab">coverage rate<span class="tip">覆蓋率：題庫項目能對應到真實語料中 MOT 細節的比例</span></span> &lt; 65% 觸發回到 Step 1</strong>，預期落在 70–80%。</li>
+            <li><strong>Step 5 權重校準：</strong></li>
+          </ul>
+          <div class="formula">w<sub>i</sub> = α · w<sub>i</sub><sup>freq</sup> + (1−α) · w<sub>i</sub><sup>consensus</sup>，α = 0.6</div>
+
+          <h3>2. SC 預期較低覆蓋率（重要邊界條件）</h3>
+          <div class="callout">
+            <strong>方法論誠實揭露：</strong>研究預先註冊指出，SC 構面在真實語料的覆蓋率預期僅 40–55%（顯著低於 CA 的 75–88%）。原因是 SC 信號通常來自評論「<strong>metadata</strong>」（帳號資料）而非評論「<strong>content</strong>」（評論內文）。這是已知的測量限制，不是失敗。
+          </div>
+
+          <h3>3. MACS 與傳統假評偵測的根本差異</h3>
+          <table class="hyp-table">
+            <tr><th>面向</th><th>傳統 ML/DL 偵測</th><th>MACS</th></tr>
+            <tr><td>運作時機</td><td>事後（消費者已看過）</td><td>事前（在發文當下重塑成本）</td></tr>
+            <tr><td>主要對象</td><td>分類器</td><td>消費者 + 評論者 + 平台三方</td></tr>
+            <tr><td>對抗 LLM 強化</td><td>軍備競賽，效能逐步下降</td><td>提高假評製造的「具體細節」成本</td></tr>
+            <tr><td>透明度</td><td>黑箱</td><td>三色等級可見、規則可解釋</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c5-quiz">
+        <div class="quiz-card" data-q="5-1" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q1</span>MACS 的「點選式」設計，最主要解決傳統假評偵測的哪個結構限制？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>讓使用者打字更快</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>讓平台節省伺服器頻寬</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>把介入時機從「事後偵測」前移至「事前重塑成本」，讓假評在生成階段就更難取得高真實性分數</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>取代所有的開放式文字評論</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="5-2" data-correct="1">
+          <div class="quiz-q"><span class="qtag">Q2</span>論文預期 SC（來源可信度）構面在真實 Google 語料的覆蓋率，會顯著低於 CA（內容真實性）。為什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>因為 SC 構面寫得太短</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>因為 SC 信號通常來自評論的 metadata（帳號資料），而非評論內文，因此在「內文文本」中自然較難偵測到</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>因為 SC 構面理論基礎較弱</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>因為 LLM 不擅長處理 SC 構面</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 6 ============ -->
+    <section class="chapter" id="ch6">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 06</div>
+        <h2 class="chapter-title">EHM 雙軌機制與六大預先註冊假設</h2>
+        <div class="chapter-en">EHM Dual-Track Mechanism and Six Pre-Registered Hypotheses</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c6-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c6-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c6-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c6-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c6-overview">
+        <div class="concept-section">
+          <h3>EHM = Expectation Honesty Management</h3>
+          <p><strong>期望誠實管理</strong>是 EAQUAL 與 MACS 共同實踐的整合性原則，呼應 Akerlof (1970) 的「<span class="vocab">dual-end intervention<span class="tip">雙端介入：在資訊不對稱市場中，必須同時加強買方識別力與重塑賣方激勵</span></span>」。</p>
+
+          <h3>EHM 雙軌結構</h3>
+          <table class="hyp-table">
+            <tr><th>軌道</th><th>機制</th><th>理論錨點</th></tr>
+            <tr><td><strong>EAQUAL</strong>（消費者端）</td><td>訓練消費者識別真實性信號</td><td>Akerlof 買方識別</td></tr>
+            <tr><td><strong>MACS</strong>（平台端）</td><td>重塑激勵幾何，讓「沒有 MOT 細節→拿不到高分」成為事實</td><td>Akerlof 賣方激勵重塑</td></tr>
+            <tr><td><strong>EHM</strong>（雙軌共振）</td><td>高 MACS 評論訓練 EAQUAL 判斷力；EAQUAL 覺察的消費者創造對 MACS 的需求</td><td>Akerlof 雙端均衡修正</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c6-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">Together, EAQUAL and MACS form a dual-track mechanism implementing the Expectation Honesty Management principle.</div>
+          <div class="sent-zh">EAQUAL 與 MACS 共同形成一個雙軌機制，實踐「期望誠實管理」原則。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Together, EAQUAL and MACS form a dual track mechanism implementing the Expectation Honesty Management principle.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="EAQUAL 與 MACS 共同形成一個雙軌機制，實踐期望誠實管理原則。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Akerlof explicitly identified the dual-end intervention requirement: reducing market failure requires both enhanced buyer-side discernment and reshaped seller-side incentives.</div>
+          <div class="sent-zh">Akerlof 明確指出「雙端介入」要件：要降低市場失靈，必須同時強化買方的識別能力，並重塑賣方的激勵結構。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Akerlof explicitly identified the dual end intervention requirement. Reducing market failure requires both enhanced buyer side discernment and reshaped seller side incentives.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="Akerlof 明確指出雙端介入要件：要降低市場失靈，必須同時強化買方的識別能力，並重塑賣方的激勵結構。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">We pre-register six hypotheses across two clusters: H1a-H1c psychometric properties, and H2a-H2c MACS efficacy.</div>
+          <div class="sent-zh">我們預先註冊六項假設，分兩大組：H1a–H1c 屬量表心理計量性質、H2a–H2c 屬 MACS 效能。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="We pre register six hypotheses across two clusters: H 1a to H 1c psychometric properties, and H 2a to H 2c MACS efficacy.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="我們預先註冊六項假設，分兩大組：H1a 到 H1c 屬量表心理計量性質、H2a 到 H2c 屬 MACS 效能。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">MACS effectiveness will be moderated by product involvement, per the Elaboration Likelihood Model.</div>
+          <div class="sent-zh">依據精細可能性模型，MACS 的效能會被「產品涉入度」所調節。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="MACS effectiveness will be moderated by product involvement, per the Elaboration Likelihood Model.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="依據精細可能性模型，MACS 的效能會被「產品涉入度」所調節。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">High-involvement consumers will show stronger MACS-effect than low-involvement consumers, replicating the central versus peripheral processing distinction.</div>
+          <div class="sent-zh">高涉入消費者會展現更強的 MACS 效應，這將複製「中央路徑 vs. 周邊路徑」的處理區別。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="High involvement consumers will show stronger MACS effect than low involvement consumers, replicating the central versus peripheral processing distinction.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="高涉入消費者會展現更強的 MACS 效應，這將複製中央路徑與周邊路徑的處理區別。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c6-concept">
+        <div class="concept-section">
+          <h3>H1 群組：EAQUAL 心理計量性質</h3>
+          <table class="hyp-table">
+            <tr><th>編號</th><th>內容</th><th>預期效應</th></tr>
+            <tr><td><strong>H1a</strong></td><td><span class="vocab">Convergent validity<span class="tip">收斂效度：同一構念下不同題目的相關性</span></span>：SC、CA、EC 三構面顯著正相關</td><td>α ≥ 0.70</td></tr>
+            <tr><td><strong>H1b</strong></td><td><span class="vocab">Discriminant validity<span class="tip">區辨效度：不同構念之間的區別程度</span></span>：EAQUAL 總分與 SERVQUAL Gap 5 正相關但共享變異 &lt; 40%</td><td>r ≈ 0.30–0.45</td></tr>
+            <tr><td><strong>H1c</strong></td><td><span class="vocab">Predictive validity<span class="tip">預測效度：能否預測理論上應該被預測的後果變項</span></span>：EAQUAL 總分顯著預測信任與購買意願</td><td>β &gt; 0.40 (信任), β &gt; 0.25 (購買)</td></tr>
+          </table>
+
+          <h3>H2 群組：MACS 效能</h3>
+          <table class="hyp-table">
+            <tr><th>編號</th><th>內容</th><th>預期效應</th></tr>
+            <tr><td><strong>H2a</strong></td><td>真實性區辨：Red-tier 中實驗確認假評比例顯著高於 Green-tier</td><td>比率 ≥ 3.5x</td></tr>
+            <tr><td><strong>H2b</strong></td><td>消費者信任校準：MACS-active 條件下信任校準更準確</td><td>d = 0.45–0.65</td></tr>
+            <tr><td><strong>H2c</strong></td><td>ELM 調節邊界：高涉入消費者 MACS 效應顯著大於低涉入</td><td>ΔR² ≈ 0.06–0.10</td></tr>
+          </table>
+
+          <h3>ELM 雙條件邊界</h3>
+          <p>本框架明確指認其作用範圍受 <span class="vocab">Elaboration Likelihood Model<span class="tip">精細可能性模型（ELM）：說服效果取決於消費者的動機與能力，分中央路徑與周邊路徑</span></span> (Petty &amp; Cacioppo, 1986) 的「動機 × 能力」雙條件限制：</p>
+          <ul>
+            <li><strong>高涉入（中央路徑）：</strong>有動機+有能力 → 願意花心思讀 MACS 標示 → 效果強（d ≈ 0.55–0.80）</li>
+            <li><strong>低涉入（周邊路徑）：</strong>動機或能力缺失 → 只看星等與表面線索 → 效果小（d ≈ 0.10–0.25）</li>
+          </ul>
+          <div class="callout">
+            <strong>研究誠實性：</strong>H2c 的 ELM 調節是「<strong>邊界設定</strong>」而非「<strong>主要驗證</strong>」。即使該調節未被複製，框架的核心論點仍然可被檢證——它只是把 MACS 的適用範圍縮小，而非推翻 MACS 本身。
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c6-quiz">
+        <div class="quiz-card" data-q="6-1" data-correct="2">
+          <div class="quiz-q"><span class="qtag">Q1</span>EHM 雙軌機制（EAQUAL ↔ MACS）最主要回應的是哪一個古典理論的呼籲？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>Drucker (1993) 的問責性</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>Spence (1973) 的信號分離均衡</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>Akerlof (1970) 對市場失靈的「雙端介入」呼籲（強化買方識別 + 重塑賣方激勵）</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>Petty &amp; Cacioppo (1986) 的 ELM</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="6-2" data-correct="1">
+          <div class="quiz-q"><span class="qtag">Q2</span>H2c 預測「高涉入消費者的 MACS 效應顯著大於低涉入」，這個假設背後的理論是？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>Akerlof 的檸檬市場理論</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>Petty &amp; Cacioppo 的精細可能性模型（ELM），中央路徑 vs. 周邊路徑</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>PZB 的服務品質五缺口</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>Carlzon 的 MOT 理論</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER 7 ============ -->
+    <section class="chapter" id="ch7">
+      <div class="chapter-head">
+        <div class="chapter-no">Chapter 07</div>
+        <h2 class="chapter-title">研究方法、預期結果與貢獻</h2>
+        <div class="chapter-en">Methodology, Expected Results, and Contributions</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="c7-overview">📘 概覽</button>
+        <button class="tab-btn" data-tab="c7-bilingual">🌐 中英對照</button>
+        <button class="tab-btn" data-tab="c7-concept">💡 重點概念</button>
+        <button class="tab-btn" data-tab="c7-quiz">✏ 小測驗</button>
+      </div>
+
+      <div class="tab-panel active" id="c7-overview">
+        <div class="concept-section">
+          <h3>三階段混合方法設計</h3>
+          <table class="hyp-table">
+            <tr><th>階段</th><th>方法</th><th>樣本</th><th>目的</th></tr>
+            <tr><td>Phase 1</td><td>三 LLM 集成 + 真實語料校驗</td><td>1,440 → 800 題；1,000 則 Google 評論</td><td>建構 MACS 語意題庫</td></tr>
+            <tr><td>Phase 2</td><td>橫斷面消費者調查</td><td>N = 800 台灣消費者</td><td>驗證 EAQUAL-15（H1a–c）</td></tr>
+            <tr><td>Phase 3</td><td>受試者間實驗</td><td>N = 240（3×2 混合因子）</td><td>檢測 MACS 效能與 ELM 調節（H2a–c）</td></tr>
+          </table>
+
+          <h3>三大貢獻</h3>
+          <ul>
+            <li><strong>理論貢獻：</strong>確立 Gap D 為與 PZB Gap 4 制度性獨立的服務品質缺口</li>
+            <li><strong>方法貢獻：</strong>提供首個消費者端真實性測量工具（EAQUAL-15）</li>
+            <li><strong>政策貢獻：</strong>回應 Akerlof (1970) 的雙端介入理論呼籲，給平台、監管者、消費者的可部署架構</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c7-bilingual">
+        <div class="sentence-pair">
+          <div class="sent-en">Phase 2 targets N = 800 Taiwan consumers aged 20 to 65, stratified by age and restaurant review-reading frequency.</div>
+          <div class="sent-zh">第二階段目標樣本為 N = 800 名 20–65 歲台灣消費者，依年齡與餐廳評論閱讀頻率分層抽樣。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Phase 2 targets N equals 800 Taiwan consumers aged 20 to 65, stratified by age and restaurant review reading frequency.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="第二階段目標樣本為 N 等於 800 名 20 到 65 歲台灣消費者，依年齡與餐廳評論閱讀頻率分層抽樣。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">Phase 3 employs a 3 by 2 mixed factorial design: MACS condition by Product involvement.</div>
+          <div class="sent-zh">第三階段採取 3×2 混合因子設計：MACS 條件 × 產品涉入度。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="Phase 3 employs a 3 by 2 mixed factorial design: MACS condition by Product involvement.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="第三階段採取 3 乘 2 混合因子設計：MACS 條件乘上產品涉入度。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">No data have been collected at the time of pre-registration. All numerical predictions are explicit and will be evaluated against actual data.</div>
+          <div class="sent-zh">在預先註冊的當下尚未蒐集任何資料。所有數值預測均已明示，未來將以實際資料檢驗。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="No data have been collected at the time of pre registration. All numerical predictions are explicit and will be evaluated against actual data.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="在預先註冊的當下尚未蒐集任何資料。所有數值預測均已明示，未來將以實際資料檢驗。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">The pre-registered report format disciplines our theoretical claims to be falsifiable by data we have not yet seen.</div>
+          <div class="sent-zh">預先註冊報告的格式，迫使我們的理論主張必須能被「尚未看見的資料」所否證。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="The pre registered report format disciplines our theoretical claims to be falsifiable by data we have not yet seen.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="預先註冊報告的格式，迫使我們的理論主張必須能被尚未看見的資料所否證。">🔊 中</button>
+          </div>
+        </div>
+
+        <div class="sentence-pair">
+          <div class="sent-en">EAQUAL provides the first consumer-side three-dimensional measurement instrument explicitly targeting expectation-authenticity rather than perceived service quality.</div>
+          <div class="sent-zh">EAQUAL 提供了首個明確以「期望真實性」為目標、而非「感知服務品質」的消費者端三構面測量工具。</div>
+          <div class="sent-controls">
+            <button class="tts-btn" data-tts-en="EAQUAL provides the first consumer side three dimensional measurement instrument explicitly targeting expectation authenticity rather than perceived service quality.">🔊 EN</button>
+            <button class="tts-btn zh" data-tts-zh="EAQUAL 提供了首個明確以期望真實性為目標、而非感知服務品質的消費者端三構面測量工具。">🔊 中</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c7-concept">
+        <div class="concept-section">
+          <h3>1. Phase 2 抽樣設計（EAQUAL 驗證）</h3>
+          <ul>
+            <li>N = 800：年齡 20–34 / 35–49 / 50–65 = 1:1:1；閱讀頻率 高/中/低 = 1:1:1</li>
+            <li>誘因：每位 NTD 100，倫理審查通過</li>
+            <li>每人讀 8 則刺激評論（4 真 4 假隨機呈現）</li>
+            <li>分析：前半 EFA + 後半 CFA 交叉驗證</li>
+          </ul>
+
+          <h3>2. Phase 3 實驗設計（MACS 效能）</h3>
+          <p>3（MACS 條件：Green / Yellow / Red 顯示）× 2（涉入度：高 / 低）<span class="vocab">mixed factorial<span class="tip">混合因子設計：同時包含受試者間與受試者內變項的實驗設計</span></span>。</p>
+          <ul>
+            <li>N = 240（每條件 40 人）</li>
+            <li>6 個模擬餐廳選擇情境（3 高涉入：晚宴；3 低涉入：平日午餐）</li>
+            <li>檢測「<span class="vocab">trust calibration<span class="tip">信任校準：消費者對評論真實性的判斷與實際真實性的吻合程度</span></span>準確度」= 1 − |感知真實性 − 實際真實性|</li>
+          </ul>
+
+          <h3>3. 預先註冊的硬性停止條件</h3>
+          <div class="callout">
+            <strong>方法論誠實設計：</strong>若 Phase 1 真實語料覆蓋率 &lt; 65%，<strong>協議自動停止</strong>，必須在透明文件化修訂後才能重啟。這就是 Pre-Registered Report 的精神：先把「失敗條件」寫死，避免事後 <span class="vocab">p-hacking<span class="tip">p 值狩獵：研究者反覆嘗試不同分析以取得顯著結果的問題行為</span></span>。
+          </div>
+
+          <h3>4. 已預先揭露的限制</h3>
+          <ul>
+            <li>三家 LLM 訓練語料有重疊（Common Crawl），集成不能完全消除偏誤</li>
+            <li>Phase 1 校準限餐廳業；其他產業需重做</li>
+            <li>對抗性脆弱：LLM 越強，MACS 區辨力會下降——應視為「縱深防禦的一層」</li>
+            <li>MACS 三色門檻仰賴 Local Guide 代理；未來需更嚴謹的真實基準</li>
+            <li>單作者限制：Phase 1 prompt 設計建議事前由專家審查</li>
+          </ul>
+
+          <h3>5. 為什麼選 Pre-Registered Report 格式？</h3>
+          <p>本研究主動採用 Nosek et al. (2018) 的預先註冊報告標準，把所有理論主張、假設、樣本計畫、分析程序<strong>在資料蒐集前就鎖定</strong>。預期效應量區間來自先行文獻而非任何前測資料。任何最終實作的偏離都會在補充材料透明揭露。這個格式讓本研究的理論框架，能夠被「尚未看到的資料」所<strong>否證</strong>——這是當代「可信賴服務研究」的新標準。</p>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="c7-quiz">
+        <div class="quiz-card" data-q="7-1" data-correct="3">
+          <div class="quiz-q"><span class="qtag">Q1</span>本研究的「Pre-Registered Report」格式，最核心的科學價值是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>讓論文比較容易投稿成功</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>節省研究經費</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>讓作者可以事後調整假設</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>把所有理論主張、假設、效應量區間在資料蒐集前就鎖定，使研究可以被「尚未看到的資料」所否證，避免 p-hacking</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" data-q="7-2" data-correct="0">
+          <div class="quiz-q"><span class="qtag">Q2</span>Phase 1 的硬性停止條件是什麼？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-i="0"><span class="marker">A.</span>若真實語料覆蓋率 &lt; 65%，協議自動停止，必須先文件化修訂才能重啟</button>
+            <button class="quiz-opt" data-i="1"><span class="marker">B.</span>若研究經費花完則停止</button>
+            <button class="quiz-opt" data-i="2"><span class="marker">C.</span>若樣本不足 N = 800 則停止</button>
+            <button class="quiz-opt" data-i="3"><span class="marker">D.</span>沒有停止條件</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © Gap D 互動學習網站 · 內容改編自 黄國津 (2026)《Closing the Pre-Encounter Pollution Gap》Pre-Registered Report v1.0<br>
+      本網站僅供學術學習用途 · 所有 Hover 解釋與測驗題均依原始論文重點重新設計
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ====================== TTS ====================== */
+const synth = window.speechSynthesis;
+const ttsSupported = !!synth;
+if(!ttsSupported){
+  document.getElementById('ttsWarn').style.display='block';
+}
+
+let currentUtter = null;
+
+function speak(text, lang){
+  if(!ttsSupported) return;
+  if(synth.speaking) synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = (lang==='zh-TW'||lang==='zh-CN') ? 0.95 : 0.9;
+  u.pitch = 1;
+  // try to pick best voice
+  const voices = synth.getVoices();
+  const targetLangs = lang.startsWith('zh')
+    ? ['zh-TW','zh-HK','zh-CN','cmn-Hant-TW','cmn-Hans-CN']
+    : ['en-US','en-GB','en-AU'];
+  for(const tl of targetLangs){
+    const v = voices.find(v=>v.lang===tl);
+    if(v){u.voice=v;break;}
+  }
+  currentUtter = u;
+  synth.speak(u);
+}
+
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.tts-btn');
+  if(!btn) return;
+  if(!ttsSupported){
+    alert('您的瀏覽器不支援朗讀功能，請改用 Chrome / Edge / Safari。');
+    return;
+  }
+  const en = btn.dataset.ttsEn;
+  const zh = btn.dataset.ttsZh;
+  document.querySelectorAll('.tts-btn.speaking').forEach(b=>b.classList.remove('speaking'));
+  btn.classList.add('speaking');
+  if(en) speak(en, 'en-US');
+  else if(zh) speak(zh, 'zh-TW');
+  if(currentUtter){
+    currentUtter.onend = ()=>btn.classList.remove('speaking');
+    currentUtter.onerror = ()=>btn.classList.remove('speaking');
+  }
+});
+
+// preload voices (some browsers load async)
+if(ttsSupported){
+  synth.onvoiceschanged = ()=>{};
+}
+
+/* ====================== TABS ====================== */
+document.querySelectorAll('.tabs').forEach(tabsEl=>{
+  tabsEl.addEventListener('click', e=>{
+    const btn = e.target.closest('.tab-btn');
+    if(!btn) return;
+    const target = btn.dataset.tab;
+    const chapter = btn.closest('.chapter');
+    chapter.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    chapter.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    chapter.querySelector('#'+target).classList.add('active');
+  });
+});
+
+/* ====================== QUIZ ====================== */
+const FEEDBACK = {
+  '1-1': {
+    correct: '✓ 正確！ZMOT 崩解的本質正是：消費者以為自己在閱讀真實同儕經驗，實際上接觸的是被精心製造、用來偏移期望的虛假敘事。這個信任的「框架錯置」是後續所有問題的起點。',
+    wrong: '✗ 不正確。ZMOT 崩解不是技術故障或行為改變，而是「消費者所相信的資訊性質」與「資訊實際性質」之間出現結構性錯位。'
+  },
+  '1-2': {
+    correct: '✓ 正確！這就是論文最關鍵的洞見：期望污染早於偵測發生，事後刪除無法回收已經被扭曲的期望。這也是為什麼 Gap D 是「測量理論」問題而非「技術」問題。',
+    wrong: '✗ 不正確。論文明確指出：問題不在偵測技術，而在「即使刪除了，已經接觸過的消費者期望已經被扭曲，並會延伸到實際服務接觸中」。'
+  },
+  '2-1': {
+    correct: '✓ 正確！Gap D = E_polluted − E_authentic。這個公式抓的是「期望本身被污染」的那部分，跟 P − E（感知服務品質）是兩個層次。',
+    wrong: '✗ 不正確。注意 Gap D 不是 P − E（那是 Gap 5），也不是業者承諾的差距（那是 Gap 4），而是兩種期望狀態的差距。'
+  },
+  '2-2': {
+    correct: '✓ 正確！這是論文反覆強調的關鍵後果：當 Gap D > 0 時，即使服務沒有任何客觀失敗，主觀感知的 Gap 5 仍會擴大（因為 E_polluted 被推高），使誠實業者也被消費者打低分。',
+    wrong: '✗ 不正確。被假評推高的期望，會讓「正常水準」的服務看起來像「失敗」，這正是 Gap D 對誠實業者的傷害機制。'
+  },
+  '3-1': {
+    correct: '✓ 正確！這就是 Spence 信號理論在數位時代的精彩應用：假評不只是「另一種廣告」，它是利用「同儕經驗框架」躲過了消費者用來防衛廣告的說服知識，因此單位資訊的影響力反而比真廣告大。',
+    wrong: '✗ 不正確。論文的論證重點不在文筆或圖片，而在「信號框架被偽裝成同儕經驗」這個結構性差異。'
+  },
+  '3-2': {
+    correct: '✓ 正確！這就是 Akerlof 檸檬市場在 Gap D 場景的最危險推論：誠實成本變相提高，最終形成「全體業者都得買假評」的混合均衡，市場崩塌。台灣電商假評率從 12% 升到 29% 即是徵兆。',
+    wrong: '✗ 不正確。檸檬市場的危險不是讓誠實業者變強或退出做慈善，而是「無法區分」的結構迫使誠實業者也加入造假，造成全市場崩塌。'
+  },
+  '4-1': {
+    correct: '✓ 正確！這是論文第 3.3 節的核心對應：SC（誰寫的）對應問責、CA（寫了什麼）對應信號成本（MOT 細節難偽造）、EC（如何相符）對應均衡偵測。',
+    wrong: '✗ 不正確。請對照論文：SC 處理「作者可問責性」對應 Drucker，CA 處理「MOT 細節成本」對應 Spence，EC 處理「跨評論一致性」對應 Akerlof。'
+  },
+  '4-2': {
+    correct: '✓ 正確！這就是 CA 構面的實證基礎：假評因缺乏實際經驗，無法產出感官細節（味道、聲音、空間）與認知具體性，只能訴諸通用情緒詞。',
+    wrong: '✗ 不正確。Salminen 等人 (2025) 的關鍵發現是：感官詞密度與認知具體性顯著降低（d = 0.62），這直接成為 CA 構面的設計依據。'
+  },
+  '5-1': {
+    correct: '✓ 正確！這是 MACS 與所有傳統 ML/DL 偵測最根本的不同：把介入時機從「偵測」前移至「生成」，重塑成本結構而非追逐分類器。',
+    wrong: '✗ 不正確。MACS 的關鍵不在效率或取代評論，而在「事前重塑成本」——讓沒去過的人很難勾選出符合的 MOT 細節。'
+  },
+  '5-2': {
+    correct: '✓ 正確！這是論文預先註冊就誠實揭露的測量限制：SC 信號天然存在於 metadata（帳號）而非 content（內文），因此純文本對應自然較低，但這不是失敗。',
+    wrong: '✗ 不正確。SC 較低覆蓋率不是品質問題，而是「SC 線索本來就不在內文裡」的結構性事實。'
+  },
+  '6-1': {
+    correct: '✓ 正確！EHM 雙軌（買方識別 + 賣方激勵重塑）正是對 Akerlof 在 1970 年原文中明示「市場失靈修正必須雙端介入」這個理論呼籲的具體操作回應。',
+    wrong: '✗ 不正確。雖然 Drucker 與 Spence 也提供理論支柱，但「雙端介入」這個機制設計呼籲，是 Akerlof 在檸檬市場原文中的核心主張。'
+  },
+  '6-2': {
+    correct: '✓ 正確！高涉入啟動中央路徑（仔細處理 MACS 標示）→ 效應強；低涉入只走周邊路徑（只看星等）→ 效應小。這就是 ELM 雙條件邊界。',
+    wrong: '✗ 不正確。「涉入度」是 ELM 的核心構念，論文明確以 ELM 預測高低涉入下的效應量差距。'
+  },
+  '7-1': {
+    correct: '✓ 正確！這就是 Nosek et al. (2018) 預先註冊報告的精神：在資料蒐集前就鎖定理論主張、假設、預期效應量區間，避免事後選擇性報告與 p-hacking，提升研究可信度。',
+    wrong: '✗ 不正確。Pre-Registered Report 不是為了寫起來方便或省錢，恰恰相反，它要求在看到資料之前就把所有預測寫死，使研究真正可被否證。'
+  },
+  '7-2': {
+    correct: '✓ 正確！這是預先註冊的具體實踐：先把「失敗門檻」寫死。覆蓋率 < 65% 表示語意題庫無法充分對應真實語料，必須回到 Step 1 重新設計。',
+    wrong: '✗ 不正確。Phase 1 設定的硬性停止條件是「真實語料覆蓋率 < 65%」，這是預先註冊報告必須先寫好的「方法論失敗條件」。'
+  }
+};
+
+document.querySelectorAll('.quiz-card').forEach(card=>{
+  const correctIdx = parseInt(card.dataset.correct);
+  const qid = card.dataset.q;
+  const opts = card.querySelectorAll('.quiz-opt');
+  const fb = card.querySelector('.quiz-feedback');
+  opts.forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      const i = parseInt(opt.dataset.i);
+      opts.forEach(o=>o.disabled=true);
+      const isCorrect = i === correctIdx;
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+      if(!isCorrect){
+        opts[correctIdx].classList.add('correct');
+      }
+      fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct':'wrong');
+      fb.textContent = isCorrect ? FEEDBACK[qid].correct : FEEDBACK[qid].wrong;
+    });
+  });
+});
+
+/* ====================== VOCAB TAP (mobile) ====================== */
+document.querySelectorAll('.vocab').forEach(v=>{
+  v.addEventListener('click', e=>{
+    e.stopPropagation();
+    document.querySelectorAll('.vocab.show').forEach(x=>{
+      if(x!==v) x.classList.remove('show');
+    });
+    v.classList.toggle('show');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.vocab.show').forEach(x=>x.classList.remove('show'));
+});
+
+/* ====================== NAV / SCROLL / PROGRESS ====================== */
+const navLinks = document.querySelectorAll('.nav-list a');
+const chapters = document.querySelectorAll('.chapter');
+
+navLinks.forEach(a=>{
+  a.addEventListener('click', ()=>{
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+function updateActiveNav(){
+  const scrollY = window.scrollY + 120;
+  let activeId = chapters[0].id;
+  chapters.forEach(ch=>{
+    if(ch.offsetTop <= scrollY) activeId = ch.id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href') === '#'+activeId);
+  });
+  // progress
+  const total = document.body.scrollHeight - window.innerHeight;
+  const pct = total>0 ? (window.scrollY/total)*100 : 0;
+  document.getElementById('progress').style.width = pct+'%';
+}
+window.addEventListener('scroll', updateActiveNav, {passive:true});
+updateActiveNav();
+
+/* ====================== MOBILE TOGGLE ====================== */
+document.getElementById('mobileToggle').addEventListener('click', e=>{
+  e.stopPropagation();
+  document.getElementById('sidebar').classList.toggle('open');
+});
+document.addEventListener('click', e=>{
+  if(window.innerWidth<=900 &&
+     !e.target.closest('.sidebar') &&
+     !e.target.closest('.mobile-toggle')){
+    document.getElementById('sidebar').classList.remove('open');
+  }
+});
+
+/* stop TTS on page hidden */
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && synth && synth.speaking) synth.cancel();
+});
+</script>
+
+</body>
+</html>
